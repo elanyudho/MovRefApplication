@@ -1,0 +1,25 @@
+<resources>
+    <string name="app_name">MovRef</string>
+    <string name="query_hint_search_movie">Search your next watch movie</string>
+    <string name="title_content_find_movie">Find your next watch movie</string>
+    <string name="popular">Popular</string>
+    <string name="top_rated">Top Rated</string>
+    <string name="upcoming">Upcoming</string>
+
+    <string name="error_unknown_error">There is an error. Please try again</string>
+    <string name="genre">Genre</string>
+    <string name="duration">Duration</string>
+    <string name="rate">Rate</string>
+    <string name="cast">Cast</string>
+    <string name="overview">Overview</string>
+    <string name="recommendations_movie">Recommendations Movie</string>
+    <string name="detail_movie">Movie Detail</string>
+    <string name="detail_people">People Detail</string>
+    <string name="known_for">Known For</string>
+    <string name="birthday">Place of Birth</string>
+    <string name="not_available">Not Available</string>
+    <string name="trending">Trending</string>
+    <string name="see_all">See All</string>
+    <string name="popular_actor_and_actress">Popular Actor and Actress</string>
+
+</resources>
