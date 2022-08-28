@@ -3,6 +3,8 @@ package com.elanyudho.movrefapplication.utils.extensions
 import android.R
 import android.content.res.Resources
 import android.graphics.Color
+import java.math.RoundingMode
+import java.text.DecimalFormat
 
 val Int.dp : Int
     get() = (this * Resources.getSystem().displayMetrics.density + 0.5f).toInt()
@@ -20,4 +22,10 @@ fun Int.isColorDark(): Boolean {
         rtnValue = true
     }
     return !rtnValue
+}
+
+fun Double.roundOffDecimal(): Double {
+    val df = DecimalFormat("#")
+
+    return df.format(this).toDouble()
 }

@@ -15,9 +15,17 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.MovRefApplication">
         <activity
-            android:name=".ui.morepeople.MorePeopleActivity"
+            android:name=".ui.genre.listmoviebygenre.MovieGenreActivity"
             android:exported="false"
             android:theme="@style/Theme.MovRefApplication.ClearScreen"/>
+        <activity
+            android:name=".ui.genre.listgenre.ListGenreActivity"
+            android:exported="false"
+            android:theme="@style/Theme.MovRefApplication.ClearScreen" />
+        <activity
+            android:name=".ui.morepeople.MorePeopleActivity"
+            android:exported="false"
+            android:theme="@style/Theme.MovRefApplication.ClearScreen" />
         <activity
             android:name=".ui.moremovie.MoreMovieActivity"
             android:exported="false"

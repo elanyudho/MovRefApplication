@@ -5,6 +5,7 @@ import com.elanyudho.core.vo.Either
 import com.elanyudho.movrefapplication.domain.model.CreditsMovie
 import com.elanyudho.movrefapplication.domain.model.DetailMovie
 import com.elanyudho.movrefapplication.domain.model.MovieItem
+import com.elanyudho.movrefapplication.domain.model.Review
 
 interface MovieRepository {
 
@@ -23,4 +24,6 @@ interface MovieRepository {
     suspend fun getCreditsMovie(id: String): Either<Failure, List<CreditsMovie>>
 
     suspend fun getRecommendationMovie(id: String, page: String): Either<Failure, List<MovieItem>>
+
+    suspend fun getReviewMovie(id: String, page: String): Either<Failure, List<Review>>
 }

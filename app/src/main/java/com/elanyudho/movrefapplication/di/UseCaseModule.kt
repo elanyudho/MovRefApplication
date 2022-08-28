@@ -4,6 +4,7 @@ import com.elanyudho.movrefapplication.domain.repository.GenreRepository
 import com.elanyudho.movrefapplication.domain.repository.MovieRepository
 import com.elanyudho.movrefapplication.domain.repository.PeopleRepository
 import com.elanyudho.movrefapplication.domain.usecase.genre.GetGenreUseCase
+import com.elanyudho.movrefapplication.domain.usecase.genre.GetMovieGenreUseCase
 import com.elanyudho.movrefapplication.domain.usecase.movie.*
 import com.elanyudho.movrefapplication.domain.usecase.people.*
 import dagger.Module
@@ -71,4 +72,12 @@ object UseCaseModule {
     @Provides
     @ActivityScoped
     fun provideSearchPeopleUseCase(repository: PeopleRepository) = GetSearchPeopleUseCase(repository)
+
+    @Provides
+    @ActivityScoped
+    fun provideGetMovieGenreUseCase(repository: GenreRepository) = GetMovieGenreUseCase(repository)
+
+    @Provides
+    @ActivityScoped
+    fun provideGetReviewMovieUseCase(repository: MovieRepository) = GetReviewMovieUseCase(repository)
 }

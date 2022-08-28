@@ -71,7 +71,7 @@ class MoreMovieActivity : BaseActivityBinding<ActivityMoreMovieBinding>(),
             }
             is MoreMovieViewModel.MoreUiState.FailedLoadData -> {
                 stopLoading()
-                Toast.makeText(this, getString(R.string.error_unknown_error), Toast.LENGTH_SHORT)
+                Toast.makeText(this, state.failure.code, Toast.LENGTH_SHORT)
                     .show()
                 onBackPressed()
             }

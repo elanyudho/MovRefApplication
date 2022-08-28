@@ -63,4 +63,12 @@ object MapperModule {
     @ActivityScoped
     fun provideSearchPeopleMapper() = SearchPeopleMapper()
 
+    @Provides
+    @ActivityScoped
+    fun provideMovieGenreMapper() = MovieGenreMapper()
+
+    @Provides
+    @ActivityScoped
+    fun provideReviewMovieMapper() = ReviewMapper()
+
 }

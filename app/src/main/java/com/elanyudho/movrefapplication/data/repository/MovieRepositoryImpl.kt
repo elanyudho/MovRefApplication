@@ -7,6 +7,7 @@ import com.elanyudho.movrefapplication.data.remote.source.RemoteDataSource
 import com.elanyudho.movrefapplication.domain.model.CreditsMovie
 import com.elanyudho.movrefapplication.domain.model.DetailMovie
 import com.elanyudho.movrefapplication.domain.model.MovieItem
+import com.elanyudho.movrefapplication.domain.model.Review
 import com.elanyudho.movrefapplication.domain.repository.MovieRepository
 import kotlinx.coroutines.delay
 import javax.inject.Inject
@@ -19,7 +20,8 @@ class MovieRepositoryImpl @Inject constructor(
     private val trendingMovieMapper: TrendingMovieMapper,
     private val searchMovieMapper: SearchMovieMapper,
     private val detailMovieMapper: DetailMovieMapper,
-    private val creditsMovieMapper: CreditsMovieMapper
+    private val creditsMovieMapper: CreditsMovieMapper,
+    private val reviewMapper: ReviewMapper
 ): MovieRepository {
 
     override suspend fun getPopularMovie(page: String): Either<Failure, List<MovieItem>> {
@@ -111,6 +113,18 @@ class MovieRepositoryImpl @Inject constructor(
         return when(val response = remoteDataSource.getRecommendationMovie(id, page)) {
             is Either.Success -> {
                 val list = popularMovieMapper.mapToDomain(response.body)
+                Either.Success(list)
+            }
+            is Either.Error -> {
+                Either.Error(response.failure)
+            }
+        }
+    }
+
+    override suspend fun getReviewMovie(id: String, page: String): Either<Failure, List<Review>> {
+        return when(val response = remoteDataSource.getReviewMovie(id, page)) {
+            is Either.Success -> {
+                val list = reviewMapper.mapToDomain(response.body)
                 Either.Success(list)
             }
             is Either.Error -> {

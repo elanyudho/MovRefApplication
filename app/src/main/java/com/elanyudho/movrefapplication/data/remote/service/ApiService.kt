@@ -1,6 +1,6 @@
 package com.elanyudho.movrefapplication.data.remote.service
 
-import com.elanyudho.movrefapplication.BuildConfig
+
 import com.elanyudho.movrefapplication.data.remote.response.*
 import com.elanyudho.movrefapplication.utils.api.Constants.API_KEY
 import retrofit2.Response
@@ -80,4 +80,16 @@ interface ApiService {
         @Query("query") query: String,
         @Query("page") page: String
     ): Response<SearchPeopleResponse>
+
+    @GET("discover/movie?api_key=${API_KEY}&language=en-US")
+    suspend fun getMovieListByGenre(
+        @Query("page") page: String,
+        @Query("with_genres") genreId: String
+    ): Response<GenreMovieResponse>
+
+    @GET("movie/{id}/reviews?api_key=${API_KEY}&language=en-US")
+    suspend fun getReviewMovie(
+        @Path("id") id: String,
+        @Query("page") page: String
+    ): Response<ReviewResponse>
 }

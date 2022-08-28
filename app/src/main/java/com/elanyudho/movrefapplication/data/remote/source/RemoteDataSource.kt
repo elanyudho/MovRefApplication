@@ -78,4 +78,14 @@ class RemoteDataSource
         request {
             api.getSearchPeople(query, page)
         }
+
+    suspend fun getMovieGenre(page: String, genreId: String): Either<Failure, GenreMovieResponse> =
+        request {
+            api.getMovieListByGenre(page, genreId)
+        }
+
+    suspend fun getReviewMovie(id: String, page: String): Either<Failure, ReviewResponse> =
+        request {
+            api.getReviewMovie(id, page)
+        }
 }

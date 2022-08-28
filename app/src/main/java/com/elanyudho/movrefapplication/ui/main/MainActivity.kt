@@ -17,6 +17,8 @@ import com.elanyudho.movrefapplication.databinding.ActivityMainBinding
 import com.elanyudho.movrefapplication.domain.model.Genre
 import com.elanyudho.movrefapplication.ui.detailmovie.DetailMovieActivity
 import com.elanyudho.movrefapplication.ui.detailpeople.DetailPeopleActivity
+import com.elanyudho.movrefapplication.ui.genre.listgenre.ListGenreActivity
+import com.elanyudho.movrefapplication.ui.genre.listmoviebygenre.MovieGenreActivity
 import com.elanyudho.movrefapplication.ui.main.adapter.MainMovieAdapter
 import com.elanyudho.movrefapplication.ui.main.adapter.MainPeopleAdapter
 import com.elanyudho.movrefapplication.ui.main.adapter.SuggestionAdapter
@@ -24,6 +26,8 @@ import com.elanyudho.movrefapplication.ui.moremovie.MoreMovieActivity
 import com.elanyudho.movrefapplication.ui.morepeople.MorePeopleActivity
 import com.elanyudho.movrefapplication.utils.extensions.gone
 import com.elanyudho.movrefapplication.utils.extensions.visible
+import com.google.android.material.chip.Chip
+import com.google.android.material.chip.ChipDrawable
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 
@@ -37,8 +41,6 @@ class MainActivity : BaseActivityBinding<ActivityMainBinding>(),
     private val movieAdapter: MainMovieAdapter by lazy { MainMovieAdapter() }
     private val peopleAdapter: MainPeopleAdapter by lazy { MainPeopleAdapter() }
     private val suggestionAdapter: SuggestionAdapter by lazy { SuggestionAdapter() }
-
-    private val genres = ArrayList<Genre>()
 
     override val bindingInflater: (LayoutInflater) -> ActivityMainBinding
         get() = { ActivityMainBinding.inflate(layoutInflater) }
@@ -88,7 +90,15 @@ class MainActivity : BaseActivityBinding<ActivityMainBinding>(),
                 }
             }
             is MainViewModel.MainUiState.GenreDataLoaded -> {
-                genres.addAll(state.genreList)
+                if (state.genreList.size > 9) {
+                    for (i in 1..9) {
+                        addChipGenre(state.genreList[i])
+                    }
+                } else {
+                    for (i in state.genreList) {
+                        addChipGenre(i)
+                    }
+                }
             }
             is MainViewModel.MainUiState.PopularPeopleDataLoaded -> {
                 peopleAdapter.submitList(state.peopleList)
@@ -97,7 +107,7 @@ class MainActivity : BaseActivityBinding<ActivityMainBinding>(),
 
             }
             is MainViewModel.MainUiState.FailedLoadData -> {
-                Toast.makeText(this, getString(R.string.error_unknown_error), Toast.LENGTH_SHORT)
+                Toast.makeText(this, state.failure.code, Toast.LENGTH_SHORT)
                     .show()
             }
         }
@@ -243,6 +253,27 @@ class MainActivity : BaseActivityBinding<ActivityMainBinding>(),
 
             hideKeyboard(this)
         }
+
+        binding.tvSeeAllGenre.setOnClickListener {
+            startActivity(Intent(this, ListGenreActivity::class.java))
+
+            hideKeyboard(this)
+        }
+    }
+
+    private fun addChipGenre(genre: Genre) {
+        val chip = Chip(this)
+        val drawable = ChipDrawable.createFromAttributes(this, null, 0, com.google.android.material.R.style.Widget_MaterialComponents_Chip_Choice)
+        chip.setChipDrawable(drawable)
+        chip.text = genre.genre
+        chip.setTextColor(getColorStateList(R.color.chip_text))
+        chip.chipBackgroundColor = getColorStateList(R.color.chip_background)
+        chip.setOnClickListener {
+            val intent = Intent(this, MovieGenreActivity::class.java)
+            intent.putExtra(MovieGenreActivity.EXTRA_TYPE, genre)
+            startActivity(intent)
+        }
+        binding.chipGroupGenre.addView(chip)
     }
 
     private fun hideKeyboard(activity: Activity) {

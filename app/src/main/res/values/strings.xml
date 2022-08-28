@@ -21,5 +21,8 @@
     <string name="trending">Trending</string>
     <string name="see_all">See All</string>
     <string name="popular_actor_and_actress">Popular Actor and Actress</string>
+    <string name="list_genre">Genres</string>
+    <string name="release_date">Release Date</string>
+    <string name="reviews">Reviews</string>
 
 </resources>
