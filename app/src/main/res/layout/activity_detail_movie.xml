@@ -332,6 +332,45 @@
                 app:layout_constraintTop_toTopOf="@+id/materialTextView9" />
 
             <com.google.android.material.textview.MaterialTextView
+                android:id="@+id/materialTextView12"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="24dp"
+                android:layout_marginTop="16dp"
+                android:text="@string/trailer_movie"
+                android:textColor="@color/white"
+                android:textSize="18sp"
+                app:layout_goneMarginTop="64dp"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/rv_review" />
+
+            <com.google.android.material.textview.MaterialTextView
+                android:id="@+id/materialTextView13"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="32dp"
+                android:text="@string/not_available"
+                android:textColor="@color/white"
+                android:textSize="12sp"
+                android:visibility="gone"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/materialTextView12"
+                app:layout_constraintVertical_bias="0.0"
+                app:lineHeight="20sp" />
+
+            <com.pierfrancescosoffritti.androidyoutubeplayer.core.player.views.YouTubePlayerView
+                android:id="@+id/vt_movie"
+                android:layout_width="0dp"
+                android:layout_height="200dp"
+                android:layout_marginHorizontal="24dp"
+                android:layout_marginTop="8dp"
+                android:visibility="visible"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/materialTextView12" />
+
+            <com.google.android.material.textview.MaterialTextView
                 android:id="@+id/materialTextView5"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -342,7 +381,7 @@
                 android:textSize="18sp"
                 app:layout_goneMarginTop="64dp"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/rv_review" />
+                app:layout_constraintTop_toBottomOf="@+id/vt_movie" />
 
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/rv_recommendation"

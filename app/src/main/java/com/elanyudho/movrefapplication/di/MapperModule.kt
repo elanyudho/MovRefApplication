@@ -71,4 +71,8 @@ object MapperModule {
     @ActivityScoped
     fun provideReviewMovieMapper() = ReviewMapper()
 
+    @Provides
+    @ActivityScoped
+    fun provideVideoMovieMapper() = VideoMovieMapper()
+
 }

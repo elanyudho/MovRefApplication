@@ -84,4 +84,7 @@ dependencies {
 
     // Banner
     implementation "com.github.denzcoskun:ImageSlideshow:0.1.0"
+
+    //YoutubePlayer
+    implementation 'com.pierfrancescosoffritti.androidyoutubeplayer:core:11.1.0'
 }

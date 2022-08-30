@@ -4,10 +4,7 @@ import com.elanyudho.core.exception.Failure
 import com.elanyudho.core.vo.Either
 import com.elanyudho.movrefapplication.data.remote.mapper.*
 import com.elanyudho.movrefapplication.data.remote.source.RemoteDataSource
-import com.elanyudho.movrefapplication.domain.model.CreditsMovie
-import com.elanyudho.movrefapplication.domain.model.DetailMovie
-import com.elanyudho.movrefapplication.domain.model.MovieItem
-import com.elanyudho.movrefapplication.domain.model.Review
+import com.elanyudho.movrefapplication.domain.model.*
 import com.elanyudho.movrefapplication.domain.repository.MovieRepository
 import kotlinx.coroutines.delay
 import javax.inject.Inject
@@ -21,7 +18,8 @@ class MovieRepositoryImpl @Inject constructor(
     private val searchMovieMapper: SearchMovieMapper,
     private val detailMovieMapper: DetailMovieMapper,
     private val creditsMovieMapper: CreditsMovieMapper,
-    private val reviewMapper: ReviewMapper
+    private val reviewMapper: ReviewMapper,
+    private val videoMovieMapper: VideoMovieMapper
 ): MovieRepository {
 
     override suspend fun getPopularMovie(page: String): Either<Failure, List<MovieItem>> {
@@ -125,6 +123,18 @@ class MovieRepositoryImpl @Inject constructor(
         return when(val response = remoteDataSource.getReviewMovie(id, page)) {
             is Either.Success -> {
                 val list = reviewMapper.mapToDomain(response.body)
+                Either.Success(list)
+            }
+            is Either.Error -> {
+                Either.Error(response.failure)
+            }
+        }
+    }
+
+    override suspend fun getVideoMovie(id: String): Either<Failure, List<Video>> {
+        return when(val response = remoteDataSource.getVideoMovie(id)) {
+            is Either.Success -> {
+                val list = videoMovieMapper.mapToDomain(response.body)
                 Either.Success(list)
             }
             is Either.Error -> {

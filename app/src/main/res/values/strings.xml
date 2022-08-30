@@ -24,5 +24,6 @@
     <string name="list_genre">Genres</string>
     <string name="release_date">Release Date</string>
     <string name="reviews">Reviews</string>
+    <string name="trailer_movie">Trailer Movie</string>
 
 </resources>

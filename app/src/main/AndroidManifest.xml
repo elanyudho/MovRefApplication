@@ -17,30 +17,37 @@
         <activity
             android:name=".ui.genre.listmoviebygenre.MovieGenreActivity"
             android:exported="false"
+            android:screenOrientation="portrait"
             android:theme="@style/Theme.MovRefApplication.ClearScreen"/>
         <activity
             android:name=".ui.genre.listgenre.ListGenreActivity"
             android:exported="false"
+            android:screenOrientation="portrait"
             android:theme="@style/Theme.MovRefApplication.ClearScreen" />
         <activity
             android:name=".ui.morepeople.MorePeopleActivity"
             android:exported="false"
+            android:screenOrientation="portrait"
             android:theme="@style/Theme.MovRefApplication.ClearScreen" />
         <activity
             android:name=".ui.moremovie.MoreMovieActivity"
             android:exported="false"
+            android:screenOrientation="portrait"
             android:theme="@style/Theme.MovRefApplication.ClearScreen" />
         <activity
             android:name=".ui.detailpeople.DetailPeopleActivity"
             android:exported="false"
+            android:screenOrientation="portrait"
             android:theme="@style/Theme.MovRefApplication.ClearScreen" />
         <activity
             android:name=".ui.detailmovie.DetailMovieActivity"
             android:exported="false"
+            android:screenOrientation="portrait"
             android:theme="@style/Theme.MovRefApplication.ClearScreen" />
         <activity
             android:name=".ui.splash.SplashScreenActivity"
             android:exported="true"
+            android:screenOrientation="portrait"
             android:theme="@style/Theme.MovRefApplication.ClearScreen">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -50,6 +57,7 @@
         </activity>
         <activity
             android:name=".ui.main.MainActivity"
+            android:screenOrientation="portrait"
             android:theme="@style/Theme.MovRefApplication.ClearScreen" />
     </application>
 

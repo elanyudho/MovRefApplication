@@ -1,13 +1,10 @@
 package com.elanyudho.movrefapplication.ui.detailmovie
 
-import android.R
 import android.annotation.SuppressLint
 import android.content.Intent
 import android.view.LayoutInflater
 import android.widget.Toast
-import androidx.constraintlayout.widget.ConstraintLayout
-import androidx.constraintlayout.widget.ConstraintSet
-import androidx.core.view.children
+import androidx.annotation.NonNull
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.elanyudho.core.abstraction.BaseActivityBinding
@@ -19,13 +16,15 @@ import com.elanyudho.movrefapplication.ui.detailmovie.adapter.ReviewMovieAdapter
 import com.elanyudho.movrefapplication.ui.detailpeople.DetailPeopleActivity
 import com.elanyudho.movrefapplication.utils.extensions.*
 import com.elanyudho.movrefapplication.utils.pagination.RecyclerviewPaginator
+import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.YouTubePlayer
+import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.listeners.AbstractYouTubePlayerListener
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 
 
 @AndroidEntryPoint
 class DetailMovieActivity : BaseActivityBinding<ActivityDetailMovieBinding>(),
-    Observer<DetailMovieViewModel.DetailUiState> {
+    Observer<DetailMovieViewModel.DetailUiState>{
 
     @Inject
     lateinit var mViewModel: DetailMovieViewModel
@@ -39,6 +38,10 @@ class DetailMovieActivity : BaseActivityBinding<ActivityDetailMovieBinding>(),
     private var paginator: RecyclerviewPaginator? = null
 
     private var movieId: String = ""
+
+    private var isFirstGet = true
+
+    private var videoMovie: String = ""
 
     override val bindingInflater: (LayoutInflater) -> ActivityDetailMovieBinding
         get() = { ActivityDetailMovieBinding.inflate(layoutInflater) }
@@ -54,13 +57,17 @@ class DetailMovieActivity : BaseActivityBinding<ActivityDetailMovieBinding>(),
             getCreditsMovie(movieId)
             getRecommendationMovie(movieId, "1")
             getReviewMovie(movieId, 1L)
+            getVideoMovie(movieId)
         }
 
+        setVideoMovie()
         setHeader()
         setMovieCastAction()
         setRecommendationAction()
         setReviewMovieAction()
         setReviewMoviePagination(movieId)
+
+
     }
 
     override fun onChanged(state: DetailMovieViewModel.DetailUiState?) {
@@ -92,12 +99,22 @@ class DetailMovieActivity : BaseActivityBinding<ActivityDetailMovieBinding>(),
             }
             is DetailMovieViewModel.DetailUiState.ReviewMovieDataLoaded -> {
                 stopLoading()
-                if (state.reviews.isEmpty()) {
+                if (state.reviews.isEmpty() && isFirstGet) {
+                    isFirstGet = false
                     binding.rvReview.gone()
                     binding.materialTextView11.visible()
 
                 } else {
+                    isFirstGet = false
                     reviewMovieAdapter.appendList(state.reviews)
+                }
+            }
+            is DetailMovieViewModel.DetailUiState.VideoMovieDataLoaded -> {
+                if (state.videos.isEmpty()) {
+                    binding.vtMovie.gone()
+                    binding.materialTextView13.visible()
+                } else {
+                    videoMovie = state.videos[0].url
                 }
             }
             is DetailMovieViewModel.DetailUiState.FailedLoadData -> {
@@ -173,6 +190,15 @@ class DetailMovieActivity : BaseActivityBinding<ActivityDetailMovieBinding>(),
             tvTitleMovie.text = detail.movieName
             ivPosterMovie.glide(this@DetailMovieActivity, detail.moviePoster?: "")
         }
+    }
+
+    private fun setVideoMovie() {
+        lifecycle.addObserver(binding.vtMovie)
+        binding.vtMovie.addYouTubePlayerListener(object : AbstractYouTubePlayerListener() {
+            override fun onReady(@NonNull youTubePlayer: YouTubePlayer) {
+                youTubePlayer.cueVideo(videoId = videoMovie, 0f)
+            }
+        })
     }
 
     private fun startInitialLoading() {

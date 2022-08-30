@@ -92,4 +92,9 @@ interface ApiService {
         @Path("id") id: String,
         @Query("page") page: String
     ): Response<ReviewResponse>
+
+    @GET("movie/{id}/videos?api_key=${API_KEY}&language=en-US")
+    suspend fun getVideoMovie(
+        @Path("id") id: String
+    ): Response<VideoResponse>
 }

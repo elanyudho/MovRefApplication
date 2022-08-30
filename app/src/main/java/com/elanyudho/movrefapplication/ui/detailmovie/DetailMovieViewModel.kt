@@ -6,14 +6,8 @@ import com.elanyudho.core.dispatcher.DispatcherProvider
 import com.elanyudho.core.exception.Failure
 import com.elanyudho.core.extension.onError
 import com.elanyudho.core.extension.onSuccess
-import com.elanyudho.movrefapplication.domain.model.CreditsMovie
-import com.elanyudho.movrefapplication.domain.model.DetailMovie
-import com.elanyudho.movrefapplication.domain.model.MovieItem
-import com.elanyudho.movrefapplication.domain.model.Review
-import com.elanyudho.movrefapplication.domain.usecase.movie.GetCreditsMovieUseCase
-import com.elanyudho.movrefapplication.domain.usecase.movie.GetDetailMovieUseCase
-import com.elanyudho.movrefapplication.domain.usecase.movie.GetRecommendationMovieUseCase
-import com.elanyudho.movrefapplication.domain.usecase.movie.GetReviewMovieUseCase
+import com.elanyudho.movrefapplication.domain.model.*
+import com.elanyudho.movrefapplication.domain.usecase.movie.*
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
@@ -23,7 +17,8 @@ class DetailMovieViewModel @Inject constructor(
     private val getDetailMovieUseCase: GetDetailMovieUseCase,
     private val getCreditsMovieUseCase: GetCreditsMovieUseCase,
     private val getRecommendationMovieUseCase: GetRecommendationMovieUseCase,
-    private val getReviewMovieUseCase: GetReviewMovieUseCase
+    private val getReviewMovieUseCase: GetReviewMovieUseCase,
+    private val getVideoMovieUseCase: GetVideoMovieUseCase
 ) : BaseViewModel<DetailMovieViewModel.DetailUiState>() {
 
     sealed class DetailUiState {
@@ -35,7 +30,7 @@ class DetailMovieViewModel @Inject constructor(
         object InitialLoading : DetailUiState()
         object PagingLoading : DetailUiState()
         data class ReviewMovieDataLoaded(val reviews: List<Review>) : DetailUiState()
-
+        data class VideoMovieDataLoaded(val videos: List<Video>) : DetailUiState()
     }
 
     fun getDetailMovie(id: String) {
@@ -110,6 +105,25 @@ class DetailMovieViewModel @Inject constructor(
                 }
                 .onError {
                     withContext(dispatcherProvider.main) {
+                        _uiState.value = DetailUiState.FailedLoadData(it)
+                    }
+                }
+        }
+    }
+
+    fun getVideoMovie(id: String) {
+        _uiState.value = DetailUiState.Loading(true)
+        viewModelScope.launch(dispatcherProvider.io) {
+            getVideoMovieUseCase.run(id)
+                .onSuccess {
+                    withContext(dispatcherProvider.main) {
+                        _uiState.value = DetailUiState.Loading(false)
+                        _uiState.value = DetailUiState.VideoMovieDataLoaded(it)
+                    }
+                }
+                .onError {
+                    withContext(dispatcherProvider.main) {
+                        _uiState.value = DetailUiState.Loading(false)
                         _uiState.value = DetailUiState.FailedLoadData(it)
                     }
                 }

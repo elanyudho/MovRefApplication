@@ -80,4 +80,8 @@ object UseCaseModule {
     @Provides
     @ActivityScoped
     fun provideGetReviewMovieUseCase(repository: MovieRepository) = GetReviewMovieUseCase(repository)
+
+    @Provides
+    @ActivityScoped
+    fun provideGetVideoMovieUseCase(repository: MovieRepository) = GetVideoMovieUseCase(repository)
 }

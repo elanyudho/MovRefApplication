@@ -88,4 +88,8 @@ class RemoteDataSource
         request {
             api.getReviewMovie(id, page)
         }
+    suspend fun getVideoMovie(id: String): Either<Failure, VideoResponse> =
+        request {
+            api.getVideoMovie(id)
+        }
 }
