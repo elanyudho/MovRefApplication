@@ -3,11 +3,11 @@ package com.elanyudho.movrefapplication.ui.genre.listmoviebygenre
 import androidx.lifecycle.viewModelScope
 import com.elanyudho.core.abstraction.BaseViewModel
 import com.elanyudho.core.dispatcher.DispatcherProvider
+import com.elanyudho.core.domain.model.MovieItem
+import com.elanyudho.core.domain.usecase.genre.GetMovieGenreUseCase
 import com.elanyudho.core.exception.Failure
 import com.elanyudho.core.extension.onError
 import com.elanyudho.core.extension.onSuccess
-import com.elanyudho.movrefapplication.domain.model.MovieItem
-import com.elanyudho.movrefapplication.domain.usecase.genre.GetMovieGenreUseCase
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import javax.inject.Inject

@@ -4,9 +4,9 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import com.elanyudho.core.abstraction.BaseRecyclerViewAdapter
 import com.elanyudho.core.abstraction.BaseViewHolder
+import com.elanyudho.core.domain.model.MovieItem
 import com.elanyudho.movrefapplication.databinding.ItemMovieLinearHorizontalBinding
-import com.elanyudho.movrefapplication.domain.model.MovieItem
-import com.elanyudho.movrefapplication.utils.extensions.glide
+import com.elanyudho.core.extension.glide
 
 class MainMovieAdapter: BaseRecyclerViewAdapter<MainMovieAdapter.MainMovieViewHolder>() {
 
@@ -18,6 +18,10 @@ class MainMovieAdapter: BaseRecyclerViewAdapter<MainMovieAdapter.MainMovieViewHo
         listData.clear()
         listData.addAll(newList)
         notifyDataSetChanged()
+    }
+
+    fun clear() {
+        listData.clear()
     }
 
     inner class MainMovieViewHolder(itemView: ItemMovieLinearHorizontalBinding) :

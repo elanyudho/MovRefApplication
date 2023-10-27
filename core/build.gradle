@@ -1,6 +1,11 @@
 plugins {
     id 'com.android.library'
+    id 'dagger.hilt.android.plugin'
     id 'org.jetbrains.kotlin.android'
+    id 'kotlin-android'
+    id 'kotlin-kapt'
+    id 'kotlin-parcelize'
+
 }
 
 android {
@@ -18,6 +23,10 @@ android {
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+
+        buildTypes.each {
+            it.buildConfigField("String", "BASE_URL", BASE_URL)
         }
     }
     compileOptions {
@@ -37,6 +46,14 @@ apply from: '../shared_dependencies.gradle'
 
 dependencies {
 
+    // Retrofit & Gson
+    implementation "com.squareup.retrofit2:retrofit:$retrofit2_version"
+    implementation "com.squareup.retrofit2:converter-gson:$retrofit2_version"
+    implementation "com.google.code.gson:gson:2.8.9"
+
+    // OkHttp Interceptor
+    implementation "com.squareup.okhttp3:okhttp:$okhttp3_version"
+    implementation "com.squareup.okhttp3:logging-interceptor:$okhttp3_version"
 
 
 }

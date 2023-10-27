@@ -25,5 +25,7 @@
     <string name="release_date">Release Date</string>
     <string name="reviews">Reviews</string>
     <string name="trailer_movie">Trailer Movie</string>
+    <string name="error_msg">There is something wrong, cannot show content</string>
+    <string name="trending_now">Trending Now</string>
 
 </resources>

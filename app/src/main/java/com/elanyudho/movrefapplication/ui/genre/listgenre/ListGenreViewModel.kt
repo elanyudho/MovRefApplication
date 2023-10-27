@@ -4,13 +4,11 @@ import androidx.lifecycle.viewModelScope
 import com.elanyudho.core.abstraction.BaseViewModel
 import com.elanyudho.core.abstraction.UseCase
 import com.elanyudho.core.dispatcher.DispatcherProvider
+import com.elanyudho.core.domain.model.Genre
+import com.elanyudho.core.domain.usecase.genre.GetGenreUseCase
 import com.elanyudho.core.exception.Failure
 import com.elanyudho.core.extension.onError
 import com.elanyudho.core.extension.onSuccess
-import com.elanyudho.movrefapplication.data.dispatcher.DispatcherProviderImpl
-import com.elanyudho.movrefapplication.domain.model.Genre
-import com.elanyudho.movrefapplication.domain.usecase.genre.GetGenreUseCase
-import com.elanyudho.movrefapplication.ui.main.MainViewModel
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import javax.inject.Inject

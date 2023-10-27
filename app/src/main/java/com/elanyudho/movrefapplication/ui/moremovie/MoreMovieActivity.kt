@@ -10,8 +10,8 @@ import com.elanyudho.movrefapplication.R
 import com.elanyudho.movrefapplication.databinding.ActivityMoreMovieBinding
 import com.elanyudho.movrefapplication.ui.detailmovie.DetailMovieActivity
 import com.elanyudho.movrefapplication.ui.moremovie.adapter.MoreMovieAdapter
-import com.elanyudho.movrefapplication.utils.extensions.gone
-import com.elanyudho.movrefapplication.utils.extensions.visible
+import com.elanyudho.core.extension.gone
+import com.elanyudho.core.extension.visible
 import com.elanyudho.movrefapplication.utils.pagination.RecyclerviewPaginator
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
@@ -27,11 +27,53 @@ class MoreMovieActivity : BaseActivityBinding<ActivityMoreMovieBinding>(),
 
     private var paginator: RecyclerviewPaginator? = null
 
+    private var isFirstGet = true
+
+    private var type = -1
+
     override val bindingInflater: (LayoutInflater) -> ActivityMoreMovieBinding
         get() = { ActivityMoreMovieBinding.inflate(layoutInflater) }
 
     override fun setupView() {
-        val type = intent.getIntExtra(EXTRA_TYPE, -1)
+        getDataIntent()
+        initViewModel()
+        setAction()
+        setMoviePagination(type)
+
+    }
+
+    override fun onChanged(state: MoreMovieViewModel.MoreUiState?) {
+        when(state) {
+            is MoreMovieViewModel.MoreUiState.MovieDataLoaded -> {
+                if (state.movieList.isEmpty() && isFirstGet) {
+                    showEmptyMovie()
+                } else {
+                    stopLoading()
+                    moreMovieAdapter.appendList(state.movieList)
+                }
+            }
+            is MoreMovieViewModel.MoreUiState.InitialLoading -> {
+                startInitialLoading()
+            }
+            is MoreMovieViewModel.MoreUiState.PagingLoading -> {
+                startPagingLoading()
+            }
+            is MoreMovieViewModel.MoreUiState.FailedLoadData -> {
+                stopLoading()
+                binding.errorViewDetail.view.visible()
+                binding.rvMovie.gone()
+                Toast.makeText(this, state.failure.throwable.message, Toast.LENGTH_SHORT).show()
+            }
+            else -> {}
+
+        }
+    }
+
+    private fun getDataIntent() {
+        type = intent.getIntExtra(EXTRA_TYPE, -1)
+
+    }
+    private fun initViewModel() {
         mViewModel.uiState.observe(this, this)
 
         when(type) {
@@ -52,30 +94,10 @@ class MoreMovieActivity : BaseActivityBinding<ActivityMoreMovieBinding>(),
                 mViewModel.getTrendingMovie(1)
             }
         }
-        setMovieAction()
-        setMoviePagination(type)
-
     }
 
-    override fun onChanged(state: MoreMovieViewModel.MoreUiState?) {
-        when(state) {
-            is MoreMovieViewModel.MoreUiState.MovieDataLoaded -> {
-                stopLoading()
-                moreMovieAdapter.appendList(state.movieList)
-            }
-            is MoreMovieViewModel.MoreUiState.InitialLoading -> {
-                startInitialLoading()
-            }
-            is MoreMovieViewModel.MoreUiState.PagingLoading -> {
-                startPagingLoading()
-            }
-            is MoreMovieViewModel.MoreUiState.FailedLoadData -> {
-                stopLoading()
-                Toast.makeText(this, state.failure.code, Toast.LENGTH_SHORT)
-                    .show()
-                onBackPressed()
-            }
-        }
+    private fun setAction() {
+        setMovieAction()
     }
 
     private fun setHeader(title: String) {
@@ -103,6 +125,7 @@ class MoreMovieActivity : BaseActivityBinding<ActivityMoreMovieBinding>(),
     private fun setMoviePagination(type: Int) {
         paginator = RecyclerviewPaginator(binding.rvMovie.layoutManager as StaggeredGridLayoutManager)
         paginator?.setOnLoadMoreListener { page ->
+            isFirstGet = false
             when(type) {
                 POPULAR -> {
                     mViewModel.getPopularMovie(page)
@@ -134,6 +157,11 @@ class MoreMovieActivity : BaseActivityBinding<ActivityMoreMovieBinding>(),
     private fun startPagingLoading() {
         binding.progressBarMovie.visible()
         binding.rvMovie.visible()
+    }
+
+    private fun showEmptyMovie() {
+        binding.progressBarMovie.gone()
+        binding.rvMovie.gone()
     }
 
     companion object {

@@ -3,12 +3,13 @@ package com.elanyudho.movrefapplication.ui.morepeople
 import androidx.lifecycle.viewModelScope
 import com.elanyudho.core.abstraction.BaseViewModel
 import com.elanyudho.core.dispatcher.DispatcherProvider
+import com.elanyudho.core.domain.model.PeopleItem
+import com.elanyudho.core.domain.usecase.people.GetPopularPeopleUseCase
+import com.elanyudho.core.domain.usecase.people.GetSearchPeopleUseCase
 import com.elanyudho.core.exception.Failure
 import com.elanyudho.core.extension.onError
 import com.elanyudho.core.extension.onSuccess
-import com.elanyudho.movrefapplication.domain.model.PeopleItem
-import com.elanyudho.movrefapplication.domain.usecase.people.GetPopularPeopleUseCase
-import com.elanyudho.movrefapplication.domain.usecase.people.GetSearchPeopleUseCase
+
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
@@ -23,8 +24,8 @@ class MorePeopleViewModel @Inject constructor(
         object InitialLoading: MoreUiState()
         object PagingLoading: MoreUiState()
         data class Loading(val isLoading: Boolean): MoreUiState()
-        data class PeopleDataLoaded(val movieList: List<PeopleItem>): MoreUiState()
-        data class SearchPeopleDataLoaded(val movieList: List<PeopleItem>): MoreUiState()
+        data class PeopleDataLoaded(val peopleList: List<PeopleItem>): MoreUiState()
+        data class SearchPeopleDataLoaded(val peopleList: List<PeopleItem>): MoreUiState()
         data class FailedLoadData(val failure: Failure): MoreUiState()
     }
 

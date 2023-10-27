@@ -10,16 +10,16 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Observer
 import com.elanyudho.core.abstraction.BaseActivityBinding
+import com.elanyudho.core.domain.model.DetailPeople
 import com.elanyudho.movrefapplication.R
 import com.elanyudho.movrefapplication.databinding.ActivityDetailPeopleBinding
-import com.elanyudho.movrefapplication.domain.model.DetailPeople
 import com.elanyudho.movrefapplication.ui.detailmovie.DetailMovieActivity
 import com.elanyudho.movrefapplication.ui.detailpeople.adapter.KnownForAdapter
 import com.elanyudho.movrefapplication.ui.detailpeople.adapter.PhotosAdapter
-import com.elanyudho.movrefapplication.utils.extensions.glide
-import com.elanyudho.movrefapplication.utils.extensions.gone
-import com.elanyudho.movrefapplication.utils.extensions.invisible
-import com.elanyudho.movrefapplication.utils.extensions.visible
+import com.elanyudho.core.extension.glide
+import com.elanyudho.core.extension.gone
+import com.elanyudho.core.extension.invisible
+import com.elanyudho.core.extension.visible
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 
@@ -40,19 +40,10 @@ class DetailPeopleActivity : BaseActivityBinding<ActivityDetailPeopleBinding>(),
         get() = { ActivityDetailPeopleBinding.inflate(layoutInflater) }
 
     override fun setupView() {
-        peopleId = intent.getStringExtra(EXTRA_PEOPLE_ID) ?: ""
-
-        //init call
-        with(mViewModel) {
-            uiState.observe(this@DetailPeopleActivity, this@DetailPeopleActivity)
-            getDetailPeople(peopleId)
-            getCreditsPeople(peopleId)
-            getImagePeople(peopleId)
-        }
-
+        getDataIntent()
+        initViewModel()
         setHeader()
-        setKnownForAction()
-        setPhotoAction()
+        setAction()
     }
 
     override fun onChanged(state: DetailPeopleViewModel.DetailUiState?) {
@@ -62,37 +53,52 @@ class DetailPeopleActivity : BaseActivityBinding<ActivityDetailPeopleBinding>(),
             }
             is DetailPeopleViewModel.DetailUiState.CreditsPeopleDataLoaded -> {
                 if (state.credits.isEmpty()) {
-                    binding.materialTextView13.visible()
-                    binding.rvKnownFor.gone()
+                    showEmptyCreditPeopleView()
                 } else {
                     knownForAdapter.submitList(state.credits)
-                    binding.materialTextView9.gone()
-                    binding.rvKnownFor.visible()
                 }
             }
             is DetailPeopleViewModel.DetailUiState.ImagePeopleLoaded -> {
                 if (state.listMovie.isEmpty()) {
-                    binding.materialTextView9.visible()
-                    binding.rvPhotos.invisible()
+                    showEmptyImagePeopleView()
                 } else {
                     photosAdapter.submitList(state.listMovie)
-                    binding.materialTextView9.gone()
-                    binding.rvPhotos.visible()
                 }
             }
             is DetailPeopleViewModel.DetailUiState.Loading -> {
 
             }
             is DetailPeopleViewModel.DetailUiState.FailedLoadData -> {
-                Toast.makeText(this, state.failure.toString(), Toast.LENGTH_SHORT)
-                    .show()
+                binding.errorViewDetail.view.visible()
+                binding.scrollView.gone()
+
+                Toast.makeText(this, state.failure.throwable.message, Toast.LENGTH_SHORT).show()
             }
+            else -> {}
         }
+    }
+
+    private fun getDataIntent() {
+        peopleId = intent.getStringExtra(EXTRA_PEOPLE_ID) ?: ""
     }
 
     private fun setHeader() {
         binding.headerDetailPeople.btnBack.setOnClickListener { onBackPressed() }
         binding.headerDetailPeople.tvTitleHeader.text = getString(R.string.detail_people)
+    }
+
+    private fun initViewModel() {
+        mViewModel.uiState.observe(this@DetailPeopleActivity, this@DetailPeopleActivity)
+        with(mViewModel) {
+            getDetailPeople(peopleId)
+            getCreditsPeople(peopleId)
+            getImagePeople(peopleId)
+        }
+    }
+
+    private fun setAction() {
+        setKnownForAction()
+        setPhotoAction()
     }
 
     private fun setKnownForAction() {
@@ -103,25 +109,15 @@ class DetailPeopleActivity : BaseActivityBinding<ActivityDetailPeopleBinding>(),
         }
 
         knownForAdapter.setOnClickData {
-            startActivity(
-                Intent(
-                    this,
-                    DetailMovieActivity::class.java
-                ).putExtra(DetailMovieActivity.EXTRA_MOVIE_ID, it.movieId.toString())
-            )
-
+            startActivity(Intent(this, DetailMovieActivity::class.java).putExtra(DetailMovieActivity.EXTRA_MOVIE_ID, it.movieId.toString()))
             hideKeyboard(this)
         }
     }
 
     private fun setPhotoAction() {
-
         with(binding.rvPhotos) {
             adapter = photosAdapter
             setHasFixedSize(true)
-        }
-
-        photosAdapter.setOnClickData {
         }
     }
 
@@ -150,12 +146,20 @@ class DetailPeopleActivity : BaseActivityBinding<ActivityDetailPeopleBinding>(),
         }
     }
 
+    private fun showEmptyCreditPeopleView() {
+        binding.materialTextView13.visible()
+        binding.rvKnownFor.gone()
+    }
+
+    private fun showEmptyImagePeopleView() {
+        binding.materialTextView9.visible()
+        binding.rvPhotos.invisible()
+    }
+
     private fun hideKeyboard(activity: Activity) {
         val imm: InputMethodManager =
-            activity.getSystemService(AppCompatActivity.INPUT_METHOD_SERVICE) as InputMethodManager
-        //Find the currently focused view, so we can grab the correct window token from it.
+            activity.getSystemService(INPUT_METHOD_SERVICE) as InputMethodManager
         var view: View? = activity.currentFocus
-        //If no view currently has focus, create a new one, just so we can grab a window token from it
         if (view == null) {
             view = View(activity)
         }

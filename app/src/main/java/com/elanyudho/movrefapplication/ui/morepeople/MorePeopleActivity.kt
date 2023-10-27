@@ -10,17 +10,13 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.SearchView
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.StaggeredGridLayoutManager
 import com.elanyudho.core.abstraction.BaseActivityBinding
-import com.elanyudho.movrefapplication.R
+import com.elanyudho.core.extension.gone
+import com.elanyudho.core.extension.visible
 import com.elanyudho.movrefapplication.databinding.ActivityMorePeopleBinding
-import com.elanyudho.movrefapplication.ui.detailmovie.DetailMovieActivity
 import com.elanyudho.movrefapplication.ui.detailpeople.DetailPeopleActivity
-import com.elanyudho.movrefapplication.ui.moremovie.MoreMovieActivity
 import com.elanyudho.movrefapplication.ui.morepeople.adapter.PopularPeopleAdapter
 import com.elanyudho.movrefapplication.ui.morepeople.adapter.SuggestionAdapter
-import com.elanyudho.movrefapplication.utils.extensions.gone
-import com.elanyudho.movrefapplication.utils.extensions.visible
 import com.elanyudho.movrefapplication.utils.pagination.RecyclerviewPaginator
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
@@ -37,32 +33,33 @@ class MorePeopleActivity : BaseActivityBinding<ActivityMorePeopleBinding>(),
 
     private var paginator: RecyclerviewPaginator? = null
 
+    private var isFirstGet = true
+
     override val bindingInflater: (LayoutInflater) -> ActivityMorePeopleBinding
         get() = { ActivityMorePeopleBinding.inflate(layoutInflater) }
 
     override fun setupView() {
-
-        mViewModel.uiState.observe(this, this)
-        mViewModel.getPopularPeople(1)
-
-        setBackAction()
-        setPopularPeopleAction()
-        setSearchPeopleAction()
+        initViewModel()
+        setAction()
         setPopularPeoplePagination()
     }
 
     override fun onChanged(state: MorePeopleViewModel.MoreUiState?) {
         when(state) {
             is MorePeopleViewModel.MoreUiState.PeopleDataLoaded -> {
-                stopLoading()
-                popularPeopleAdapter.appendList(state.movieList)
+                if (state.peopleList.isEmpty() && isFirstGet) {
+                    showEmptyPeople()
+                } else {
+                    stopLoading()
+                    popularPeopleAdapter.appendList(state.peopleList)
+                }
             }
             is MorePeopleViewModel.MoreUiState.SearchPeopleDataLoaded -> {
-                suggestionAdapter.submitList(state.movieList)
-                if (state.movieList.isEmpty()) {
+                if (state.peopleList.isEmpty()) {
                     binding.rvSuggestion.gone()
                 } else {
                     binding.rvSuggestion.visible()
+                    suggestionAdapter.submitList(state.peopleList)
                 }
             }
             is MorePeopleViewModel.MoreUiState.Loading -> {
@@ -76,15 +73,32 @@ class MorePeopleActivity : BaseActivityBinding<ActivityMorePeopleBinding>(),
             }
             is MorePeopleViewModel.MoreUiState.FailedLoadData -> {
                 stopLoading()
-                Toast.makeText(this, getString(R.string.error_unknown_error), Toast.LENGTH_SHORT)
-                    .show()
-                onBackPressed()
+                binding.errorViewDetail.view.visible()
+                binding.rvPopularPeople.gone()
+                Toast.makeText(this, state.failure.throwable.message, Toast.LENGTH_SHORT).show()
             }
+            else -> {}
+
         }
     }
 
-    private fun setPopularPeopleAction() {
+    override fun onResume() {
+        super.onResume()
+        clearFocusSearchBar()
+    }
 
+    private fun initViewModel() {
+        mViewModel.uiState.observe(this, this)
+        mViewModel.getPopularPeople(1)
+    }
+
+    private fun setAction() {
+        setBackAction()
+        setPopularPeopleAction()
+        setSearchPeopleAction()
+    }
+
+    private fun setPopularPeopleAction() {
         with(binding.rvPopularPeople) {
             adapter = popularPeopleAdapter
             setHasFixedSize(true)
@@ -116,10 +130,11 @@ class MorePeopleActivity : BaseActivityBinding<ActivityMorePeopleBinding>(),
                 }
 
                 override fun onQueryTextChange(newText: String?): Boolean {
-                    if (newText?.length == 0) {
-                        mViewModel.getSearchPeople("Cpgncpgncpgn", "1")
-                    } else {
+                    if (newText?.isNotEmpty() == true || newText.toString() == "") {
                         mViewModel.getSearchPeople(newText.toString(), "1")
+                    } else {
+                        binding.rvSuggestion.gone()
+                        suggestionAdapter.clear()
                     }
                     return true
                 }
@@ -144,6 +159,7 @@ class MorePeopleActivity : BaseActivityBinding<ActivityMorePeopleBinding>(),
         paginator =
             RecyclerviewPaginator(binding.rvPopularPeople.layoutManager as LinearLayoutManager)
         paginator?.setOnLoadMoreListener { page ->
+            isFirstGet = false
             mViewModel.getPopularPeople(page)
         }
         paginator?.let { binding.rvPopularPeople.addOnScrollListener(it) }
@@ -152,6 +168,7 @@ class MorePeopleActivity : BaseActivityBinding<ActivityMorePeopleBinding>(),
     private fun setBackAction() {
         binding.btnBack.setOnClickListener {
             onBackPressed()
+            hideKeyboard(this)
         }
     }
 
@@ -170,6 +187,11 @@ class MorePeopleActivity : BaseActivityBinding<ActivityMorePeopleBinding>(),
         binding.rvPopularPeople.visible()
     }
 
+    private fun showEmptyPeople() {
+        binding.progressBarPeople.gone()
+        binding.rvPopularPeople.gone()
+    }
+
     private fun hideKeyboard(activity: Activity) {
         val imm: InputMethodManager =
             activity.getSystemService(AppCompatActivity.INPUT_METHOD_SERVICE) as InputMethodManager
@@ -180,5 +202,11 @@ class MorePeopleActivity : BaseActivityBinding<ActivityMorePeopleBinding>(),
             view = View(activity)
         }
         imm.hideSoftInputFromWindow(view.windowToken, 0)
+    }
+
+    private fun clearFocusSearchBar() {
+        binding.searchBar.clearFocus()
+        binding.rvSuggestion.gone()
+        suggestionAdapter.clear()
     }
 }

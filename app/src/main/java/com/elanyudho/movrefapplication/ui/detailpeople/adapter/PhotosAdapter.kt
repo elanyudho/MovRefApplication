@@ -5,9 +5,9 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import com.elanyudho.core.abstraction.BaseRecyclerViewAdapter
 import com.elanyudho.core.abstraction.BaseViewHolder
+import com.elanyudho.core.domain.model.PeopleImage
 import com.elanyudho.movrefapplication.databinding.ItemPhotosBinding
-import com.elanyudho.movrefapplication.domain.model.PeopleImage
-import com.elanyudho.movrefapplication.utils.extensions.glide
+import com.elanyudho.core.extension.glide
 
 class PhotosAdapter: BaseRecyclerViewAdapter<PhotosAdapter.PhotosViewHolder>() {
 

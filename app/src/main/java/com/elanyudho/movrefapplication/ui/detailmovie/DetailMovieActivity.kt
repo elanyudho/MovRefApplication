@@ -8,13 +8,16 @@ import androidx.annotation.NonNull
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.elanyudho.core.abstraction.BaseActivityBinding
+import com.elanyudho.core.domain.model.DetailMovie
+import com.elanyudho.core.extension.glide
+import com.elanyudho.core.extension.gone
+import com.elanyudho.core.extension.roundOffDecimal
+import com.elanyudho.core.extension.visible
 import com.elanyudho.movrefapplication.databinding.ActivityDetailMovieBinding
-import com.elanyudho.movrefapplication.domain.model.DetailMovie
 import com.elanyudho.movrefapplication.ui.detailmovie.adapter.CastAdapter
 import com.elanyudho.movrefapplication.ui.detailmovie.adapter.RecommendationAdapter
 import com.elanyudho.movrefapplication.ui.detailmovie.adapter.ReviewMovieAdapter
 import com.elanyudho.movrefapplication.ui.detailpeople.DetailPeopleActivity
-import com.elanyudho.movrefapplication.utils.extensions.*
 import com.elanyudho.movrefapplication.utils.pagination.RecyclerviewPaginator
 import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.YouTubePlayer
 import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.listeners.AbstractYouTubePlayerListener
@@ -47,27 +50,12 @@ class DetailMovieActivity : BaseActivityBinding<ActivityDetailMovieBinding>(),
         get() = { ActivityDetailMovieBinding.inflate(layoutInflater) }
 
     override fun setupView() {
-
-        movieId = intent.getStringExtra(EXTRA_MOVIE_ID) ?: ""
-
-        //init call
-        with(mViewModel) {
-            uiState.observe(this@DetailMovieActivity, this@DetailMovieActivity)
-            getDetailMovie(movieId)
-            getCreditsMovie(movieId)
-            getRecommendationMovie(movieId, "1")
-            getReviewMovie(movieId, 1L)
-            getVideoMovie(movieId)
-        }
-
-        setVideoMovie()
+        getDataIntent()
+        initViewModel()
         setHeader()
-        setMovieCastAction()
-        setRecommendationAction()
-        setReviewMovieAction()
+        setAction()
+        setVideoMovie()
         setReviewMoviePagination(movieId)
-
-
     }
 
     override fun onChanged(state: DetailMovieViewModel.DetailUiState?) {
@@ -80,13 +68,10 @@ class DetailMovieActivity : BaseActivityBinding<ActivityDetailMovieBinding>(),
             }
             is DetailMovieViewModel.DetailUiState.RecommendationMovieDataLoaded -> {
                 if (state.listMovie.isEmpty()) {
-                    binding.materialTextView7.visible()
-                    binding.rvRecommendation.invisible()
+                    showEmptyDataRecommendation()
                 } else {
-                    binding.materialTextView7.gone()
-                    binding.rvRecommendation.visible()
+                    recommendationAdapter.submitList(state.listMovie)
                 }
-                recommendationAdapter.submitList(state.listMovie)
             }
             is DetailMovieViewModel.DetailUiState.Loading -> {
 
@@ -100,33 +85,52 @@ class DetailMovieActivity : BaseActivityBinding<ActivityDetailMovieBinding>(),
             is DetailMovieViewModel.DetailUiState.ReviewMovieDataLoaded -> {
                 stopLoading()
                 if (state.reviews.isEmpty() && isFirstGet) {
-                    isFirstGet = false
-                    binding.rvReview.gone()
-                    binding.materialTextView11.visible()
-
+                    showEmptyDataReview()
                 } else {
-                    isFirstGet = false
                     reviewMovieAdapter.appendList(state.reviews)
                 }
             }
             is DetailMovieViewModel.DetailUiState.VideoMovieDataLoaded -> {
                 if (state.videos.isEmpty()) {
-                    binding.vtMovie.gone()
-                    binding.materialTextView13.visible()
+                    showEmptyDataVideo()
                 } else {
                     videoMovie = state.videos[0].url
                 }
             }
             is DetailMovieViewModel.DetailUiState.FailedLoadData -> {
-                Toast.makeText(this, getString(com.elanyudho.movrefapplication.R.string.error_unknown_error), Toast.LENGTH_SHORT)
-                    .show()
+                binding.errorViewDetail.view.visible()
+                binding.scrollView.gone()
+
+                Toast.makeText(this, state.failure.throwable.message, Toast.LENGTH_SHORT).show()
             }
+            else -> {}
+        }
+    }
+
+    private fun getDataIntent() {
+        movieId = intent.getStringExtra(EXTRA_MOVIE_ID) ?: ""
+    }
+
+    private fun initViewModel() {
+        mViewModel.uiState.observe(this@DetailMovieActivity, this)
+        with(mViewModel) {
+            getDetailMovie(movieId)
+            getCreditsMovie(movieId)
+            getRecommendationMovie(movieId, "1")
+            getReviewMovie(movieId, 1L)
+            getVideoMovie(movieId)
         }
     }
 
     private fun setHeader() {
         binding.headerDetailMovie.btnBack.setOnClickListener { onBackPressed() }
         binding.headerDetailMovie.tvTitleHeader.text = getString(com.elanyudho.movrefapplication.R.string.detail_movie)
+    }
+
+    private fun setAction() {
+        setMovieCastAction()
+        setRecommendationAction()
+        setReviewMovieAction()
     }
 
     private fun setMovieCastAction() {
@@ -174,6 +178,7 @@ class DetailMovieActivity : BaseActivityBinding<ActivityDetailMovieBinding>(),
     private fun setReviewMoviePagination(id: String) {
         paginator = RecyclerviewPaginator(binding.rvReview.layoutManager as LinearLayoutManager)
         paginator?.setOnLoadMoreListener { page ->
+            isFirstGet = false
             mViewModel.getReviewMovie(id, page)
         }
         paginator?.let { binding.rvReview.addOnScrollListener(it) }
@@ -212,6 +217,22 @@ class DetailMovieActivity : BaseActivityBinding<ActivityDetailMovieBinding>(),
     private fun startPagingLoading() {
         binding.progressBarMovie.visible()
     }
+
+    private fun showEmptyDataRecommendation() {
+        binding.materialTextView7.visible()
+        binding.rvRecommendation.gone()
+    }
+
+    private fun showEmptyDataVideo() {
+        binding.vtMovie.gone()
+        binding.materialTextView13.visible()
+    }
+
+    private fun showEmptyDataReview() {
+        binding.rvReview.gone()
+        binding.materialTextView11.visible()
+    }
+
 
     companion object {
         const val EXTRA_MOVIE_ID = "id movie"

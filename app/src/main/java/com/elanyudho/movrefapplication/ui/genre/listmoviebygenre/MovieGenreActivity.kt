@@ -1,19 +1,17 @@
 package com.elanyudho.movrefapplication.ui.genre.listmoviebygenre
 
 import android.content.Intent
-import android.util.Log
 import android.view.LayoutInflater
 import android.widget.Toast
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.StaggeredGridLayoutManager
 import com.elanyudho.core.abstraction.BaseActivityBinding
-import com.elanyudho.movrefapplication.R
+import com.elanyudho.core.domain.model.Genre
 import com.elanyudho.movrefapplication.databinding.ActivityMovieGenreBinding
-import com.elanyudho.movrefapplication.domain.model.Genre
 import com.elanyudho.movrefapplication.ui.detailmovie.DetailMovieActivity
 import com.elanyudho.movrefapplication.ui.genre.listmoviebygenre.adapter.MovieGenreAdapter
-import com.elanyudho.movrefapplication.utils.extensions.gone
-import com.elanyudho.movrefapplication.utils.extensions.visible
+import com.elanyudho.core.extension.gone
+import com.elanyudho.core.extension.visible
 import com.elanyudho.movrefapplication.utils.pagination.RecyclerviewPaginator
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
@@ -28,25 +26,30 @@ class MovieGenreActivity : BaseActivityBinding<ActivityMovieGenreBinding>(), Obs
 
     private var paginator: RecyclerviewPaginator? = null
 
+    private lateinit var genre: Genre
+
+    private var isFirstGet = true
+
     override val bindingInflater: (LayoutInflater) -> ActivityMovieGenreBinding
         get() = { ActivityMovieGenreBinding.inflate(layoutInflater) }
 
     override fun setupView() {
-        val genre = intent.getParcelableExtra<Genre>(EXTRA_TYPE)
-
-        setHeader(genre?.genre.toString())
-        mViewModel.uiState.observe(this, this)
-        mViewModel.getMovieGenre(1, genre?.id.toString())
-
-        setMovieAction()
-        setMoviePagination(genre?.id.toString())
+        getDataIntent()
+        initViewModel()
+        setHeader()
+        setAction()
+        setMoviePagination()
     }
 
     override fun onChanged(state: MovieGenreViewModel.MovieGenreUiState?) {
         when(state) {
             is MovieGenreViewModel.MovieGenreUiState.MovieDataLoaded-> {
                 stopLoading()
-                movieGenreAdapter.appendList(state.movieList)
+                if (state.movieList.isEmpty() && isFirstGet) {
+                    showEmptyDataRecommendation()
+                } else {
+                    movieGenreAdapter.appendList(state.movieList)
+                }
             }
             is MovieGenreViewModel.MovieGenreUiState.InitialLoading -> {
                 startInitialLoading()
@@ -56,12 +59,26 @@ class MovieGenreActivity : BaseActivityBinding<ActivityMovieGenreBinding>(), Obs
             }
             is MovieGenreViewModel.MovieGenreUiState.FailedLoadData -> {
                 stopLoading()
-                Toast.makeText(this, state.failure.code, Toast.LENGTH_SHORT)
-                    .show()
+                binding.errorViewDetail.view.visible()
+                binding.rvMovie.gone()
+                Toast.makeText(this, state.failure.throwable.message, Toast.LENGTH_SHORT).show()
             }
+            else -> {}
         }
     }
 
+    private fun getDataIntent() {
+        genre = intent.getParcelableExtra<Genre>(EXTRA_TYPE) as Genre
+    }
+
+    private fun initViewModel() {
+        mViewModel.uiState.observe(this, this)
+        mViewModel.getMovieGenre(1, genre.id.toString())
+    }
+
+    private fun setAction() {
+        setMovieAction()
+    }
     private fun setMovieAction() {
 
         with(binding.rvMovie) {
@@ -79,10 +96,11 @@ class MovieGenreActivity : BaseActivityBinding<ActivityMovieGenreBinding>(), Obs
         }
     }
 
-    private fun setMoviePagination(genreId: String) {
+    private fun setMoviePagination() {
         paginator = RecyclerviewPaginator(binding.rvMovie.layoutManager as StaggeredGridLayoutManager)
         paginator?.setOnLoadMoreListener { page ->
-            mViewModel.getMovieGenre(page, genreId)
+            isFirstGet = false
+            mViewModel.getMovieGenre(page, genre.id.toString())
         }
         paginator?.let { binding.rvMovie.addOnScrollListener(it) }
     }
@@ -102,14 +120,17 @@ class MovieGenreActivity : BaseActivityBinding<ActivityMovieGenreBinding>(), Obs
         binding.rvMovie.visible()
     }
 
-    private fun setHeader(text: String) {
+    private fun showEmptyDataRecommendation() {
+        binding.rvMovie.gone()
+    }
+
+    private fun setHeader() {
         binding.headerMovieGenre.btnBack.setOnClickListener { onBackPressed() }
-        binding.headerMovieGenre.tvTitleHeader.text = text
+        binding.headerMovieGenre.tvTitleHeader.text = genre.genre
     }
 
     companion object {
         const val EXTRA_TYPE = "movie_genre"
-
     }
 
 }

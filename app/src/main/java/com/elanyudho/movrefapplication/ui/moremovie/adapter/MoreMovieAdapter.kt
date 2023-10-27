@@ -4,9 +4,9 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import com.elanyudho.core.abstraction.BaseViewHolder
 import com.elanyudho.core.abstraction.PagingRecyclerviewAdapter
+import com.elanyudho.core.domain.model.MovieItem
 import com.elanyudho.movrefapplication.databinding.ItemMovieGridBinding
-import com.elanyudho.movrefapplication.domain.model.MovieItem
-import com.elanyudho.movrefapplication.utils.extensions.glide
+import com.elanyudho.core.extension.glide
 
 class MoreMovieAdapter: PagingRecyclerviewAdapter<MoreMovieAdapter.MoreMovieViewHolder, MovieItem>() {
 

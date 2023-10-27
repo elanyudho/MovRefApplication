@@ -36,8 +36,9 @@
         <entry key="app/src/main/res/layout/activity_detail_movie.xml" value="0.23229706390328153" />
         <entry key="app/src/main/res/layout/activity_list_genre.xml" value="0.3098958333333333" />
         <entry key="app/src/main/res/layout/activity_main.xml" value="0.335" />
-        <entry key="app/src/main/res/layout/activity_more_movie.xml" value="0.3098958333333333" />
-        <entry key="app/src/main/res/layout/activity_movie_genre.xml" value="0.3098958333333333" />
+        <entry key="app/src/main/res/layout/activity_more_movie.xml" value="0.2844311377245509" />
+        <entry key="app/src/main/res/layout/activity_movie_genre.xml" value="0.12874251497005987" />
+        <entry key="app/src/main/res/layout/header_app.xml" value="0.2947916666666667" />
         <entry key="app/src/main/res/layout/item_cast.xml" value="0.55" />
         <entry key="app/src/main/res/layout/item_movie_grid.xml" value="0.3098958333333333" />
         <entry key="app/src/main/res/layout/item_photos.xml" value="0.15520833333333334" />
@@ -46,7 +47,7 @@
       </map>
     </option>
   </component>
-  <component name="ProjectRootManager" version="2" languageLevel="JDK_11" default="true" project-jdk-name="11" project-jdk-type="JavaSDK">
+  <component name="ProjectRootManager" version="2" languageLevel="JDK_11" default="true" project-jdk-name="ibm-11" project-jdk-type="JavaSDK">
     <output url="file://$PROJECT_DIR$/build/classes" />
   </component>
   <component name="ProjectType">

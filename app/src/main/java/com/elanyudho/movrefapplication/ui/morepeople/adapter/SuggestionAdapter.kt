@@ -4,8 +4,8 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import com.elanyudho.core.abstraction.BaseRecyclerViewAdapter
 import com.elanyudho.core.abstraction.BaseViewHolder
+import com.elanyudho.core.domain.model.PeopleItem
 import com.elanyudho.movrefapplication.databinding.ItemSearchSuggestionBinding
-import com.elanyudho.movrefapplication.domain.model.PeopleItem
 
 class SuggestionAdapter: BaseRecyclerViewAdapter<SuggestionAdapter.SuggestionViewHolder>() {
 
@@ -17,6 +17,10 @@ class SuggestionAdapter: BaseRecyclerViewAdapter<SuggestionAdapter.SuggestionVie
         listData.clear()
         listData.addAll(newList)
         notifyDataSetChanged()
+    }
+
+    fun clear() {
+        listData.clear()
     }
 
     inner class SuggestionViewHolder(itemView: ItemSearchSuggestionBinding) :

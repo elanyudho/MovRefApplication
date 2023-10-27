@@ -3,11 +3,20 @@ package com.elanyudho.movrefapplication.ui.detailmovie
 import androidx.lifecycle.viewModelScope
 import com.elanyudho.core.abstraction.BaseViewModel
 import com.elanyudho.core.dispatcher.DispatcherProvider
+import com.elanyudho.core.domain.model.CreditsMovie
+import com.elanyudho.core.domain.model.DetailMovie
+import com.elanyudho.core.domain.model.MovieItem
+import com.elanyudho.core.domain.model.Review
+import com.elanyudho.core.domain.model.Video
+import com.elanyudho.core.domain.usecase.movie.GetCreditsMovieUseCase
+import com.elanyudho.core.domain.usecase.movie.GetDetailMovieUseCase
+import com.elanyudho.core.domain.usecase.movie.GetRecommendationMovieUseCase
+import com.elanyudho.core.domain.usecase.movie.GetReviewMovieUseCase
+import com.elanyudho.core.domain.usecase.movie.GetVideoMovieUseCase
 import com.elanyudho.core.exception.Failure
 import com.elanyudho.core.extension.onError
 import com.elanyudho.core.extension.onSuccess
-import com.elanyudho.movrefapplication.domain.model.*
-import com.elanyudho.movrefapplication.domain.usecase.movie.*
+
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import javax.inject.Inject

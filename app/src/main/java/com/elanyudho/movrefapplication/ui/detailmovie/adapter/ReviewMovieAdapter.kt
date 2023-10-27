@@ -5,10 +5,10 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import com.elanyudho.core.abstraction.BaseViewHolder
 import com.elanyudho.core.abstraction.PagingRecyclerviewAdapter
+import com.elanyudho.core.domain.model.Review
 import com.elanyudho.movrefapplication.databinding.ItemReviewBinding
-import com.elanyudho.movrefapplication.domain.model.Review
-import com.elanyudho.movrefapplication.utils.extensions.convertDate
-import com.elanyudho.movrefapplication.utils.extensions.glide
+import com.elanyudho.core.extension.convertDate
+import com.elanyudho.core.extension.glide
 
 class ReviewMovieAdapter: PagingRecyclerviewAdapter<ReviewMovieAdapter.ReviewMovieViewHolder, Review>() {
 

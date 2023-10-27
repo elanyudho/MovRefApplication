@@ -5,9 +5,9 @@ import android.view.LayoutInflater
 import android.widget.Toast
 import androidx.lifecycle.Observer
 import com.elanyudho.core.abstraction.BaseActivityBinding
+import com.elanyudho.core.domain.model.Genre
 import com.elanyudho.movrefapplication.R
 import com.elanyudho.movrefapplication.databinding.ActivityListGenreBinding
-import com.elanyudho.movrefapplication.domain.model.Genre
 import com.elanyudho.movrefapplication.ui.genre.listmoviebygenre.MovieGenreActivity
 import com.google.android.material.chip.Chip
 import com.google.android.material.chip.ChipDrawable
@@ -25,9 +25,7 @@ class ListGenreActivity : BaseActivityBinding<ActivityListGenreBinding>(),
         get() = { ActivityListGenreBinding.inflate(layoutInflater) }
 
     override fun setupView() {
-        mViewModel.uiState.observe(this@ListGenreActivity, this@ListGenreActivity)
-        mViewModel.getGenre()
-
+        initViewModel()
         setHeader()
     }
 
@@ -42,10 +40,17 @@ class ListGenreActivity : BaseActivityBinding<ActivityListGenreBinding>(),
 
             }
             is ListGenreViewModel.ListGenreUiState.FailedLoadData -> {
-                Toast.makeText(this, state.failure.code, Toast.LENGTH_SHORT)
-                    .show()
+                Toast.makeText(this, state.failure.throwable.message, Toast.LENGTH_SHORT).show()
+
             }
+            else -> {}
+
         }
+    }
+
+    private fun initViewModel() {
+        mViewModel.uiState.observe(this, this)
+        mViewModel.getGenre()
     }
 
     private fun addChipGenre(genre: Genre) {

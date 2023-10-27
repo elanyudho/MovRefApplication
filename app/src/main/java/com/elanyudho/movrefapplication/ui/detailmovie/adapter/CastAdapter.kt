@@ -5,9 +5,9 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import com.elanyudho.core.abstraction.BaseRecyclerViewAdapter
 import com.elanyudho.core.abstraction.BaseViewHolder
+import com.elanyudho.core.domain.model.CreditsMovie
 import com.elanyudho.movrefapplication.databinding.ItemCastBinding
-import com.elanyudho.movrefapplication.domain.model.CreditsMovie
-import com.elanyudho.movrefapplication.utils.extensions.glide
+import com.elanyudho.core.extension.glide
 
 class CastAdapter: BaseRecyclerViewAdapter<CastAdapter.CastViewHolder>() {
 
