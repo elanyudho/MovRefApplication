@@ -88,19 +88,16 @@ class MainActivity : BaseActivityBinding<ActivityMainBinding>(),
                 peopleAdapter.submitList(state.peopleList)
             }
             is MainViewModel.MainUiState.LoadingMovieData -> {
-                Log.d("loading", state.isLoading.toString())
                 if(state.isLoading) binding.loadingFindNextMovie.visible() else binding.loadingFindNextMovie.gone()
             }
             is MainViewModel.MainUiState.LoadingTrendingMovieData -> {
                 if(state.isLoading) binding.loadingTrending.visible() else binding.loadingTrending.gone()
             }
             is MainViewModel.MainUiState.LoadingGenreData -> {
-                Log.d("loadingGenre", state.isLoading.toString())
                 if(state.isLoading)  binding.loadingGenre.visible() else binding.loadingGenre.gone()
 
             }
             is MainViewModel.MainUiState.LoadingPopularPeopleDataData -> {
-                Log.d("loadingPeople", state.isLoading.toString())
                 if(state.isLoading) binding.loadingPopularPeople.visible() else binding.loadingPopularPeople.gone()
             }
             is MainViewModel.MainUiState.LoadingSearchData -> {
